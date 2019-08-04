@@ -5,23 +5,30 @@ module TTTGarcia
   class Error < StandardError; end
     # Your code goes here...
     class Game
-      
-      def start
+      attr_reader :dimention, :board
+
+      def initialize
         @board=nil
         @board_array=nil
+        @dimention = 0
+      end
 
+      def build
         puts 'Welcome to Tic Tac Toe¡'
-        dimention = 0
-        until valid_dimention?(dimention)
+        until valid_dimention?(@dimention)
           puts 'Please select Board dimentions (3-10max)'
           user_input = gets.chomp
-          dimention = input_to_num(user_input)
+          @dimention = input_to_num(user_input)
         end
-        @board = Array.new(dimention**2, " ")
-        @board_array = @board.each_slice(dimention).to_a
-        #display_board(board, dimention)
+        @board = Array.new(@dimention**2, " ")
+        @board_array = @board.each_slice(@dimention).to_a
+        display_board()
         #display_board_array(board_array)
-        play(dimention)
+        
+      end
+
+      def start
+        play()
       end
       private
 
@@ -36,11 +43,11 @@ module TTTGarcia
         index.between?(3,10)
       end
     
-      def display_board(dimention)
+      def display_board()
         @board.each_with_index do |element, index|
-          !((index+1)%dimention==0) ? print(" #{element} |"):print(" #{element}")
-          print "\n" if (index+1)%dimention==0
-          1.times{print "---------\n"} if (index+1)%dimention==0
+          !((index+1) % @dimention==0) ? print(" #{element} |"):print(" #{element}")
+          print "\n" if (index+1) % @dimention==0
+          1.times{print "---------\n"} if (index+1) % @dimention==0
         end
       end
 
@@ -50,16 +57,16 @@ module TTTGarcia
         end
       end
     
-      def valid_index?(index, dimention)
-        index.between?(1,dimention**2)
+      def valid_index?(index)
+        index.between?(1,@dimention**2)
       end
     
       def position_taken?(index)
         !(@board[index].nil? || @board[index] == " ")
       end
       
-      def valid_move?(index, dimention)
-        index.between?(0,(dimention**2)-1) && !position_taken?(index)
+      def valid_move?(index)
+        index.between?(0,(@dimention**2)-1) && !position_taken?(index)
       end
     
       def turn_count()
@@ -82,28 +89,64 @@ module TTTGarcia
         @board[index] = current_player
       end
       
-      def turn(dimention)        
+      def ask_for_a_move
+        gets.chomp
+      end
+      
+      def turn()        
         index = 0    
-          puts "Please choose a number from 1 to #{dimention**2}"
-          user_input = gets.chomp
+          puts "Please choose a number from 1 to #{@dimention**2}"
+          user_input = ask_for_a_move
+          #user_input = gets.chomp
           index = input_to_index(user_input)    
         
-        if valid_move?(index, dimention)
+        if valid_move?(index)
           player_token = current_player()
           move(index, player_token)
-          @board_array = @board.each_slice(dimention).to_a
-          display_board(dimention)
-          display_board_array()
+          @board_array = @board.each_slice(@dimention).to_a
+          display_board()
+          #display_board_array()
         else
-          turn(dimention)
+          turn()
         end
       end
     
       def won?()
-false       
-=begin        
+        #false       
+#=begin       
+        rows = @board_array.map do |row|
+          row
+        end
+        cols = @dimention.times.collect do |i|
+          @board_array.map do |row|
+            row[i]
+          end
+        end
+
+        diag = @dimention.times.collect do |i|
+          @board_array[i][i]
+        end
+
+        invert_diag = @dimention.times.collect do |i|
+          @board_array[i][@dimention-1-i]
+        end
+
+        join_winner = rows+cols
+        join_winner.flatten!
+        join_winner += diag + invert_diag
+        win_combinations = join_winner.each_slice(@dimention).to_a
+
+        def win_char win_combinations
+          win_combinations[0] if win_combinations.uniq.length == 1 &&
+          ["X","O"].include?(win_combinations[0])
+        end
+
+        char = win_combinations.map do |chorizo|
+          win_char chorizo
+        end.compact[0]
+
         
-=end
+#=end
       end
     
       def full?()
@@ -119,25 +162,24 @@ false
       end
 
       def winner()
-false
-=begin
-        index=[]
-        index = won?(board_array)
-        if index == false
+#false
+#=begin
+        x_or_y=""
+        x_or_y= won?()
+        if x_or_y == false
           return nil
         else
-          board_array[index[0]] == "X" ? "X" : "O"
+          x_or_y == "X" ? "X" : "O"
         end
-=end
+#=end
       end
     
-      def play(dimention)
-        until over?()       
-          puts "#{@board_array}"          
-          turn(dimention)
+      def play()
+        until over?() == true
+          turn()
         end
         if won?()
-          puts "Congratulations¡ #{winner()}"
+          puts "Congratulations #{winner()}¡¡¡"
         elsif draw?()
           puts "Cats Game¡"
         end
