@@ -7,14 +7,17 @@ module TTTGarcia
     class Game
       attr_reader :dimention, :board
 
-      def initialize
+      def initialize(ultimo_ganador="")
         @board=nil
         @board_array=nil
         @dimention = 0
+        @last_winner=ultimo_ganador
+        #@second_to_last = penultimo
       end
 
-      def build
-        puts 'Welcome to Tic Tac Toe¡'
+      def build()
+        system "clear"
+        puts "Welcome to Tic Tac Toe¡ - Last winner #{@last_winner}"
         until valid_dimention?(@dimention)
           puts 'Please select Board dimentions (3-10max)'
           user_input = gets.chomp
@@ -22,14 +25,21 @@ module TTTGarcia
         end
         @board = Array.new(@dimention**2, " ")
         @board_array = @board.each_slice(@dimention).to_a
-        display_board()
-        #display_board_array(board_array)
-        
+        display_board()        
       end
 
       def start
         play()
       end
+
+      def ultimo_ganador()
+        winner()
+      end
+
+      def penultimo()
+        draw?
+      end
+
       private
 
       def input_to_num(user_input)
@@ -47,7 +57,7 @@ module TTTGarcia
         @board.each_with_index do |element, index|
           !((index+1) % @dimention==0) ? print(" #{element} |"):print(" #{element}")
           print "\n" if (index+1) % @dimention==0
-          1.times{print "---------\n"} if (index+1) % @dimention==0
+          1.times{print "-------------\n"} if (index+1) % @dimention==0
         end
       end
 
@@ -69,7 +79,7 @@ module TTTGarcia
         index.between?(0,(@dimention**2)-1) && !position_taken?(index)
       end
     
-      def turn_count()
+      def turn_count()      
         turn=0
         @board.each do |element|
           if element == "X" || element =="O"
@@ -78,10 +88,16 @@ module TTTGarcia
         end
         return turn
       end
-      
+
       def current_player()
-        num_turns = turn_count()
-        num_turns % 2 == 0 ? player = "X" : player = "O"
+        num_turns = turn_count()        
+        if @last_winner ==""
+          num_turns % 2 == 0 ? player = "X" : player = "O"
+        elsif @last_winner == "X"
+          num_turns % 2 == 0 ? player = "O" : player = "X"
+        elsif @last_winner == "O"
+          num_turns % 2 == 0 ? player = "X" : player = "O"
+        end
         player
       end
     
@@ -108,15 +124,12 @@ module TTTGarcia
           #display_board_array()
         else
           turn()
-        end
+        end 
       end
     
-      def won?()
-        #false       
-#=begin       
-        rows = @board_array.map do |row|
-          row
-        end
+      def won?()        
+        rows = @board_array.map do |row| row end
+        
         cols = @dimention.times.collect do |i|
           @board_array.map do |row|
             row[i]
@@ -145,8 +158,6 @@ module TTTGarcia
           win_char chorizo
         end.compact[0]
 
-        
-#=end
       end
     
       def full?()
@@ -162,29 +173,28 @@ module TTTGarcia
       end
 
       def winner()
-#false
-#=begin
-        x_or_y=""
-        x_or_y= won?()
-        if x_or_y == false
+        x_or_o=""
+        x_or_o= won?()
+        if x_or_o == false
           return nil
         else
-          x_or_y == "X" ? "X" : "O"
+          x_or_o == "X" ? "X" : "O"
         end
-#=end
-      end
+      end     
     
       def play()
         until over?() == true
           turn()
         end
+
         if won?()
           puts "Congratulations #{winner()}¡¡¡"
         elsif draw?()
           puts "Cats Game¡"
         end
       end
-  end
+
+    end
 end
 
 

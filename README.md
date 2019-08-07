@@ -1,8 +1,10 @@
 # TTTGarcia
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/TTTGarcia`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to TTTGarcia, have fun with this classic Tic Tac Toe game.
+In this version you can select the board dimentions (n x n).
+Type 3 if you wish to play the classic grid.
 
-TODO: Delete this and the text above, and describe your gem
+Enjoy it¡
 
 ## Installation
 
@@ -21,8 +23,6 @@ Or install it yourself as:
     $ gem install TTTGarcia
 
 ## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 

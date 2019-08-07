@@ -3,6 +3,16 @@
 require "bundler/setup"
 require "TTTGarcia"
 
-game = TTTGarcia::Game.new
-game.build
-game.start
+  
+  last_winner = ""
+  play_again = ""
+  until play_again=="n" || play_again=="no" 
+    game = TTTGarcia::Game.new(last_winner)
+    game.build
+    game.start
+    last_winner = game.ultimo_ganador
+    #second_to_last = game.penultimo
+    puts "Play again? (y/n)"
+    play_again = gets.chomp.downcase
+    system "clear"
+  end
