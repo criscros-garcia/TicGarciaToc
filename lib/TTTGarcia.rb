@@ -1,11 +1,12 @@
 require "TTTGarcia/version"
-require "pry"
+
 
 module TTTGarcia
   class Error < StandardError; end
     # Your code goes here...
     class Game
-      attr_reader :dimention, :board
+      attr_accessor :dimention, :board
+      
 
       def initialize(ultimo_ganador="")
         @board=nil
@@ -40,11 +41,12 @@ module TTTGarcia
         draw?
       end
 
-      private
+      #private
 
       def input_to_num(user_input)
         user_input.to_i
       end
+
       def input_to_index(user_input)
         user_input.to_i-1
       end
@@ -66,11 +68,7 @@ module TTTGarcia
           puts "#{row}"
         end
       end
-    
-      def valid_index?(index)
-        index.between?(1,@dimention**2)
-      end
-    
+        
       def position_taken?(index)
         !(@board[index].nil? || @board[index] == " ")
       end
